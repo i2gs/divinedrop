@@ -49,16 +49,16 @@ public class ItemHandler {
         final Set<Item> timedItems = registry.getTimedItems();
         this.itemTickTimer = new DivineTimer(plugin, () -> {
             timedItems.forEach(this::itemTick);
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                lockRemove.lock();
-                List<Item> items = toRemove;
-                this.toRemove = shadow;
-                this.shadow = items;
-                lockRemove.unlock();
+            lockRemove.lock();
+            List<Item> items = toRemove;
+            this.toRemove = shadow;
+            this.shadow = items;
+            lockRemove.unlock();
 
-                items.forEach(Item::remove);
-                items.clear();
+            items.forEach(item -> {
+                DivineDrop.getMorePaperLib().scheduling().entitySpecificScheduler(item).run(item::remove, null);
             });
+            items.clear();
         });
     }
 
@@ -92,7 +92,7 @@ public class ItemHandler {
         List<MetadataValue> metaCountdowns = item.getMetadata(StaticData.METADATA_COUNTDOWN);
 
         if (metaCountdowns.isEmpty()) {
-            setupMetaTimer(item);
+            DivineDrop.getMorePaperLib().scheduling().entitySpecificScheduler(item).run(() -> setupMetaTimer(item), null);
             metaCountdowns = item.getMetadata(StaticData.METADATA_COUNTDOWN);
         }
 
@@ -134,23 +134,25 @@ public class ItemHandler {
 
     public void updateTimedItem(@NotNull final Item item,
                                 @NotNull final DataContainer container) {
-        if (container.getTimer() <= 0) {
-            lockShadowing.lock();
-            toRemove.add(item);
-            lockShadowing.unlock();
+        DivineDrop.getMorePaperLib().scheduling().entitySpecificScheduler(item).run(() -> {
+            if (container.getTimer() <= 0) {
+                lockShadowing.lock();
+                toRemove.add(item);
+                lockShadowing.unlock();
 
-            registry.getTimedItems().remove(item);
-        }
+                registry.getTimedItems().remove(item);
+            }
 
-        if (container.getFormat() == null)
-            container.setFormat("");
+            if (container.getFormat() == null)
+                container.setFormat("");
 
-        item.setMetadata(StaticData.METADATA_COUNTDOWN, new FixedMetadataValue(plugin, container));
-        item.setCustomName(container.getFormat()
-                .replace(StaticData.TIMER_PLACEHOLDER, String.valueOf(container.getTimer()))
-                .replace(StaticData.SIZE_PLACEHOLDER, String.valueOf(item.getItemStack().getAmount()))
-                .replace(StaticData.NAME_PLACEHOLDER, getDisplayName(item))
-        );
+            item.setMetadata(StaticData.METADATA_COUNTDOWN, new FixedMetadataValue(plugin, container));
+            item.setCustomName(container.getFormat()
+                    .replace(StaticData.TIMER_PLACEHOLDER, String.valueOf(container.getTimer()))
+                    .replace(StaticData.SIZE_PLACEHOLDER, String.valueOf(item.getItemStack().getAmount()))
+                    .replace(StaticData.NAME_PLACEHOLDER, getDisplayName(item))
+            );
+        }, null);
     }
 
     public void setupMetaTimer(@NotNull final Item item) {

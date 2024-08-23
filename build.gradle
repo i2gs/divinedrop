@@ -11,13 +11,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     compileOnly 'org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT'
     compileOnly 'commons-io:commons-io:2.11.0'
 
-    compileOnly group: 'org.jetbrains', name: 'annotations', version: '21.0.1'
+    compileOnly 'org.jetbrains:annotations:21.0.1'
 
     implementation 'space.arim.morepaperlib:morepaperlib:0.4.3'
 }
@@ -36,7 +36,7 @@ compileJava {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 

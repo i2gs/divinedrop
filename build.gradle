@@ -1,21 +1,29 @@
 plugins {
     id 'java'
+    id 'com.gradleup.shadow' version '8.3.0'
 }
 
 repositories {
     mavenCentral()
     maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
     maven { url "https://papermc.io/repo/repository/maven-public/" }
+    maven { url "https://mvn-repo.arim.space/lesser-gpl3/" }
 }
 
 dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
 
-    implementation 'org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT'
-    implementation 'commons-io:commons-io:2.11.0'
+    compileOnly 'org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT'
+    compileOnly 'commons-io:commons-io:2.11.0'
 
-    implementation group: 'org.jetbrains', name: 'annotations', version: '21.0.1'
+    compileOnly group: 'org.jetbrains', name: 'annotations', version: '21.0.1'
+
+    implementation 'space.arim.morepaperlib:morepaperlib:0.4.3'
+}
+
+shadowJar {
+    relocate 'space.arim.morepaperlib', 'com.demkom58.divinedrop.libs.morepaperlib'
 }
 
 rootProject.tasks.named("processResources") {
@@ -30,4 +38,8 @@ compileJava {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+tasks.build {
+    dependsOn shadowJar
 }

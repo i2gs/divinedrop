@@ -5,7 +5,6 @@ import com.demkom58.divinedrop.config.ConfigData;
 import com.demkom58.divinedrop.util.ItemUtil;
 import com.google.common.collect.MapMaker;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -142,7 +141,7 @@ public class ItemRegistry {
     }
 
     private void handleNewTimedItem(@NotNull final Item item) {
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+        DivineDrop.getMorePaperLib().scheduling().entitySpecificScheduler(item).run(() -> {
             if (isIgnoredItem(item))
                 return;
 
@@ -154,7 +153,7 @@ public class ItemRegistry {
             }
 
             timedItems.add(item);
-        }, 0);
+        }, null);
     }
 
     public boolean isIgnoredItem(Item item) {

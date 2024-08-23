@@ -1,11 +1,11 @@
 package com.demkom58.divinedrop.util;
 
+import com.demkom58.divinedrop.DivineDrop;
 import com.demkom58.divinedrop.version.SemVer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +70,7 @@ public class UpdateChecker {
                 final Version version = fetchLatestSupportedVersion();
 
                 if (sync)
-                    Bukkit.getScheduler().runTask(plugin, () -> handler.accept(version));
+                    DivineDrop.getMorePaperLib().scheduling().globalRegionalScheduler().run(() -> handler.accept(version));
                 else
                     handler.accept(version);
             } catch (IOException ignored) { }

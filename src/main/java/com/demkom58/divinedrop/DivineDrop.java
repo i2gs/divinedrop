@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import space.arim.morepaperlib.MorePaperLib;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +25,8 @@ import java.util.logging.Logger;
 public final class DivineDrop extends JavaPlugin {
     @Getter
     private static DivineDrop instance;
+    @Getter
+    private static MorePaperLib morePaperLib;
 
     private final MetricService metricService = new MetricService(this);
     private final UpdateChecker webSpigot = new UpdateChecker(this, new SemVer(getDescription().getVersion()),
@@ -37,6 +40,7 @@ public final class DivineDrop extends JavaPlugin {
     @Override
     public void onEnable() {
         DivineDrop.instance = this;
+        DivineDrop.morePaperLib = new MorePaperLib(this);
 
         try {
             metricService.start();
@@ -76,7 +80,7 @@ public final class DivineDrop extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getScheduler().cancelTasks(this);
+        morePaperLib.scheduling().cancelGlobalTasks();
         itemHandler.disable();
     }
 

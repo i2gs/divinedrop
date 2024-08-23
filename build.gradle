@@ -3,6 +3,8 @@ plugins {
     id 'com.gradleup.shadow' version '8.3.0'
 }
 
+version = '2.17'
+
 repositories {
     mavenCentral()
     maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
@@ -22,6 +24,12 @@ dependencies {
     implementation 'space.arim.morepaperlib:morepaperlib:0.4.3'
 }
 
+processResources {
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+    }
+}
+
 shadowJar {
     relocate 'space.arim.morepaperlib', 'com.demkom58.divinedrop.libs.morepaperlib'
 }
@@ -38,6 +46,16 @@ compileJava {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+shadowJar {
+    archiveBaseName.set("DivineDrop")
+    archiveClassifier.set(null)
+}
+
+jar {
+    archiveBaseName.set("DivineDrop")
+    archiveClassifier.set("thin")
 }
 
 tasks.build {
